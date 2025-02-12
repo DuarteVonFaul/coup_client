@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">WebSocket Login</h1>
+        <div id="loginForm">
+            <input type="text" class="form-control mt-3" id="wsUrl" placeholder="WebSocket URL" value="ws://localhost:8000/ws/">
+            <input type="text" class="form-control mt-3" id="username" placeholder="Username">
+            <button class="btn btn-primary mt-3 w-100" onclick="connectWebSocket()">Connect</button>
+        </div>
+        
+        <div id="chatContainer" style="display:none;">
+            <h2>FastAPI COUP Chat</h2>
+            <ul id='messages' class="mt-3 list-group"></ul>
+            <form action="" onsubmit="sendMessage(event)">
+                <input type="text" class="form-control mt-3" id="messageText" autocomplete="off" placeholder="Type a message..." />
+                <button class="btn btn-outline-primary mt-2 w-100">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        var ws;
+        function connectWebSocket() {
+            var url = document.getElementById("wsUrl").value;
+            var username = document.getElementById("username").value;
+            if (!url || !username) {
+                alert("Please enter WebSocket URL and Username");
+                return;
+            }
+
+            var client_id = Date.now()
+            
+            ws = new WebSocket(`${url}${client_id}/${username}`);
+            ws.onopen = function() {
+                document.getElementById("loginForm").style.display = "none";
+                document.getElementById("chatContainer").style.display = "block";
+            };
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages');
+                var message = document.createElement('li');
+                message.classList.add('list-group-item');
+                message.textContent = event.data;
+                messages.appendChild(message);
+            };
+        }
+
+        function sendMessage(event) {
+            var input = document.getElementById("messageText");
+            if (ws && input.value) {
+                ws.send(input.value);
+                input.value = '';
+            }
+            event.preventDefault();
+        }
+    </script>
+</body>
+</html>
