@@ -36,11 +36,15 @@
     </style>
         <script>
 
+            const wsUrl = sessionStorage.getItem("wsUrl");
+            const username = sessionStorage.getItem("username");
+            const clientId = sessionStorage.getItem("clientId");
+
+            var ws = new WebSocket(`${wsUrl}${clientId}/${username}`)
+
             document.addEventListener("DOMContentLoaded", function ()
              {
-                const wsUrl = sessionStorage.getItem("wsUrl");
-                const username = sessionStorage.getItem("username");
-                const clientId = sessionStorage.getItem("clientId");
+                
 
                 if (!wsUrl || !username) {
                     alert("Missing WebSocket URL or Username. Redirecting...");
@@ -49,7 +53,7 @@
                 }
 
                 // Criando a conexão WebSocket APÓS carregar a nova página
-                const ws = new WebSocket(`${wsUrl}${clientId}/${username}`);
+                ;
 
                 
 
@@ -84,6 +88,8 @@
                                 messages.appendChild(message);
                             });
                         }
+
+                        console.log(event.data)
                             
                         }else {
                         console.error("Erro: 'users' não é um array ou não existe em 'data'");
@@ -102,12 +108,9 @@
 
             function sendMessage(event)
              {
-                var input = document.getElementById("messageText");
-                if (ws && input.value) {
-                    ws.send(input.value);
-                    input.value = '';
-                }
-                event.preventDefault();
+
+                ws.send("ready")
+
             }
         </script>
 </head>
@@ -115,7 +118,7 @@
     <div class="login-container">
         <h1 class="mb-3">Lobby</h1>
         <ul id='players' class="mt-3 list-group"></ul>
-        <button id='readyPlay' class="btn btn-primary mt-3 w-100" style="display: none;">Ready</button>
+        <button id='readyPlay' class="btn btn-primary mt-3 w-100" style="display: none;" onclick="sendMessage()">Ready</button>
     </div>
 </body>
 </html>
