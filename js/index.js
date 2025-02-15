@@ -44,6 +44,40 @@ function print_coins(value, coins){
     }
 }
 
+
+function showButtons(ws,userId,actions, action){
+
+    actions.forEach(body => {
+
+        const btn = document.createElement('button');
+        btn.classList.add('btn');
+        btn.classList.add('btn-primary');
+        btn.classList.add('mt-3');
+        btn.classList.add('button');
+        btn.classList.add('w-100');
+        btn.textContent = body.name;
+        btn.onclick= () => sendAction(ws, userId, body.code);
+        action.appendChild(btn);
+
+
+    })
+
+
+    return 
+
+}
+
+function sendAction(ws,idUser,code){
+    let str = `{
+        "type":"Action",
+        "userAction": "${idUser}",
+        "revicedAction": "${idReviced}",
+        "action": "${code}"
+      }`;
+    ws.send(str)
+}
+
+
 function actionGame(data,table,hand, action){
     data.players.forEach(body => {
         if(body.id == clientId){
@@ -120,6 +154,7 @@ function actionGame(data,table,hand, action){
     }else{
         const message = document.createElement('p');
         message.textContent = data.action
+        message.classList.add('TEXT');
         action.appendChild(message)
 
     }

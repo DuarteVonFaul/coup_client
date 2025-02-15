@@ -103,23 +103,24 @@
         /* Área de ações */
         .action {
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .button {
-            display: flex;
+            flex-direction: row;
             justify-content: center;
             align-items: center;
-            background: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            min-width: 100px;
+            gap: 10px;
+            width: 100%;
+            max-height: 400px;
         }
+
+        .TEXT {
+            color: white;           /* Texto branco */
+            padding: 10px;           /* Espaçamento interno */
+            font-weight: bold;       /* Texto em negrito */
+            border-radius: 5px;      /* Bordas arredondadas */
+            text-align: center;      /* Centraliza o texto */
+            font-size: large;
+        }
+
 
     </style>
     <script src="js/index.js"></script>
@@ -152,7 +153,7 @@
 
             ws.onopen = function () {
                 console.log("✅ WebSocket Conectado!");
-                ws.send("lobby");
+                ws.send(`{"type":"lobby"}`);
             };
 
             ws.onmessage = function (event) {
@@ -178,13 +179,14 @@
                         document.getElementById("lobby").style.display = "none"
                         document.getElementById("gameplay").style.display = "block"
 
-                        table = document.getElementById("table")
-                        hand = document.getElementById("hand")
-                        action = document.getElementById("action")
+                        const table = document.getElementById("table")
+                        const hand = document.getElementById("hand")
+                        const action = document.getElementById("action")
                         hand.innerHTML = ""
                         table.innerHTML= ""
-                        action = ""
-                        actionGame(data.data,table,hand,action)
+                        action.innerHTML = ""
+                        actionGame(data.data,table,hand, action)
+                        showButtons(ws,0,data.data.action, action)
 
 
                     }
@@ -221,7 +223,7 @@
         function sendMessage(event)
             {
 
-            ws.send("ready")
+            ws.send(`{"type":"ready"}`)
 
         }
     </script>
@@ -240,8 +242,6 @@
         <div id="hand" class="hand">
         </div>
         <div id="action" class="action">
-            <div  class="button" >
-            </div>
         </div>
 
     </div>
